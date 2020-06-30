@@ -23,6 +23,9 @@ public:
 // 重写
 public:
 	virtual BOOL InitInstance();
+	virtual int ExitInstance();
+
+	HANDLE m_hMutex; // 单例互斥量
 
 // 实现
 

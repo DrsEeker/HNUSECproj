@@ -229,7 +229,6 @@ LRESULT CMicrophoneControllerDlg::onShowTask(WPARAM wParam, LPARAM lParam)
 		this->ShowWindow(SW_SHOW);//简单的显示主窗口
 		this->ShowWindow(SW_RESTORE);
 		this->CenterWindow();
-		deleteTray();
 	} break;
 	}  return 0;
 }
