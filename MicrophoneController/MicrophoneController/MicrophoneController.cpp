@@ -3,6 +3,7 @@
 //
 
 #include "pch.h"
+#include "stdafx.h"
 #include "framework.h"
 #include "MicrophoneController.h"
 #include "MicrophoneControllerDlg.h"
@@ -56,6 +57,10 @@ BOOL CMicrophoneControllerApp::InitInstance()
 		m_hMutex = NULL;
 		return FALSE;
 	}
+
+	// gdi+ 初始化
+	GdiplusStartupInput gdiplusStartupInput;
+	GdiplusStartup(&m_gdiplusToken, &gdiplusStartupInput, NULL);
 
 	// 如果一个运行在 Windows XP 上的应用程序清单指定要
 	// 使用 ComCtl32.dll 版本 6 或更高版本来启用可视化方式，
@@ -128,6 +133,8 @@ if (NULL != m_hMutex) {
 	CloseHandle(m_hMutex);
 }
 m_hMutex = NULL;
+
+GdiplusShutdown(m_gdiplusToken);
 
 return CWinApp::ExitInstance();
 }

@@ -33,6 +33,18 @@
     <ClInclude Include="pch.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="GdipButton.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="CGdiPlusBitmap.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="MemDC.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MicrophoneController.cpp">
@@ -42,6 +54,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="pch.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="GdipButton.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
@@ -56,7 +71,16 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Image Include="res\maikefeng.png">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="res\maikefeng-jingyin.png">
+      <Filter>资源文件</Filter>
+    </Image>
     <Image Include="res\MicrophoneController.ico">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="res\MicrophoneController-jingyin.ico">
       <Filter>资源文件</Filter>
     </Image>
   </ItemGroup>

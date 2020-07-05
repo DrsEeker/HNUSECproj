@@ -10,6 +10,9 @@
 
 #include "resource.h"		// 主符号
 
+#pragma comment( lib, "gdiplus.lib" )
+#include "gdiplus.h"
+using namespace Gdiplus;
 
 // CMicrophoneControllerApp:
 // 有关此类的实现，请参阅 MicrophoneController.cpp
@@ -26,6 +29,10 @@ public:
 	virtual int ExitInstance();
 
 	HANDLE m_hMutex; // 单例互斥量
+	ULONG_PTR m_gdiplusToken;
+
+	CImage img;
+	CRect rect;
 
 // 实现
 

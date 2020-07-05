@@ -1,12 +1,13 @@
 ﻿
 // MFCApplication1Dlg.cpp: 实现文件//
 
-
+#include "stdafx.h"
 #include "pch.h"
 #include "framework.h"
 #include "MicrophoneController.h"
 #include "MicrophoneControllerDlg.h"
 #include "afxdialogex.h"
+
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -62,7 +63,7 @@ CMicrophoneControllerDlg::CMicrophoneControllerDlg(CWnd* pParent /*=nullptr*/)
 void CMicrophoneControllerDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
-	DDX_Control(pDX, IDC_TO_TRAY, 最小化);
+	DDX_Control(pDX, IDC_BUTTON2, m_btn);
 }
 
 BEGIN_MESSAGE_MAP(CMicrophoneControllerDlg, CDialogEx)
@@ -71,8 +72,7 @@ BEGIN_MESSAGE_MAP(CMicrophoneControllerDlg, CDialogEx)
 	ON_WM_QUERYDRAGICON()
 	ON_WM_HOTKEY()
 	ON_MESSAGE(WM_SHOWTASK, &CMicrophoneControllerDlg::onShowTask) // 显示程序的消息映射
-	ON_BN_CLICKED(IDC_TO_TRAY, &CMicrophoneControllerDlg::OnBnClickedToTray)
-	ON_BN_CLICKED(IDC_BUTTON1, &CMicrophoneControllerDlg::OnBnClickedButton1)
+	ON_WM_TIMER()
 END_MESSAGE_MAP()
 
 
@@ -110,19 +110,94 @@ BOOL CMicrophoneControllerDlg::OnInitDialog()
 	// TODO: 在此添加额外的初始化代码
 
 	// 初始化页面
-	toTray(); // 最小化到托盘
-	ModifyStyleEx(WS_EX_APPWINDOW, WS_EX_TOOLWINDOW); // 隐藏任务栏图标
-	ShowWindow(SW_MINIMIZE); // 启动即隐藏页面
-
+	initView();
 	// 初始化设备
-	CMicrophoneControllerDlg::initDevice();
+	initDevice();
 
 	// 初始化热键程序
-	GetDlgItem(IDC_STATIC)->SetWindowText(_T("麦克风未静音"));
-	press = false;
+	// GetDlgItem(IDC_STATIC)->SetWindowText(_T("麦克风未静音"));
 	RegisterHotKey(this->GetSafeHwnd(), 1001, MOD_NOREPEAT, VK_F9); 	// 注册热键
 
+	// 设置图标
+	muteStatus = getMuteStatus();
+	if (muteStatus) {
+		m_btn.SetImage(1);
+	}
+	else {
+		m_btn.SetImage(0);
+	}
+
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
+}
+
+// 初始化视图
+void CMicrophoneControllerDlg::initView()
+{
+	// 固定窗体大小
+	ModifyStyle(m_hWnd, WS_THICKFRAME, 0, 0);
+	// 设置窗口位置
+	int  cx = GetSystemMetrics(SM_CXSCREEN);
+	int  cy = GetSystemMetrics(SM_CYSCREEN);
+	SetWindowPos(&wndTopMost, cx / 2 - 160, cy / 2 + 80, 0, 0, SWP_NOSIZE /*| SWP_NOMOVE*/);
+
+	// 透明窗体
+	COLORREF maskColor = RGB(30, 30, 30);
+	SetWindowLong(this->GetSafeHwnd(), GWL_EXSTYLE, GetWindowLong(this->GetSafeHwnd(), GWL_EXSTYLE) ^ 0x80000);
+	HINSTANCE hInst = LoadLibrary(_T("User32.DLL"));
+	if (hInst)
+	{
+		typedef BOOL(WINAPI* MYFUNC)(HWND, COLORREF, BYTE, DWORD);
+		MYFUNC fun = NULL;
+		fun = (MYFUNC)GetProcAddress(hInst, "SetLayeredWindowAttributes");
+		if (fun) {
+			fun(this->GetSafeHwnd(), maskColor, 200, LWA_ALPHA | LWA_COLORKEY);
+		}
+		FreeLibrary(hInst);
+	}
+
+	toTray(); // 最小化到托盘
+	// ModifyStyleEx(WS_EX_APPWINDOW, WS_EX_TOOLWINDOW); // 隐藏任务栏图标
+	ModifyStyleEx(WS_CAPTION, WS_EX_TOOLWINDOW); // 隐藏任务栏图标
+	SetTimer(1, 1500, NULL);// 启动ID为1的定时器，定时时间为1.5秒
+	ShowToolTip(_T("提示"), _T("启动程序"), NIIF_NONE, 100);
+
+	// 按钮设置
+	m_btn.LoadStdImage(IDB_MICROPHONE, _T("PNG"));
+	m_btn.LoadAltImage(IDB_MICROPHONE_MUTE, _T("PNG"));
+	m_btn.EnableToggle(TRUE);
+
+}
+
+void CMicrophoneControllerDlg::OnPaint()
+{
+	if (IsIconic())
+	{
+		CPaintDC dc(this); // device context for painting
+
+		SendMessage(WM_ICONERASEBKGND, (WPARAM)dc.GetSafeHdc(), 0);
+
+		// Center icon in client rectangle
+		int cxIcon = GetSystemMetrics(SM_CXICON);
+		int cyIcon = GetSystemMetrics(SM_CYICON);
+		CRect rect;
+		GetClientRect(&rect);
+		int x = (rect.Width() - cxIcon + 1) / 2;
+		int y = (rect.Height() - cyIcon + 1) / 2;
+
+		// Draw the icon
+		dc.DrawIcon(x, y, m_hIcon);
+	}
+	else
+	{
+		////////在这里添加下面代码		
+		CRect rect;
+		CPaintDC dc(this);
+		GetClientRect(rect);
+		dc.FillSolidRect(rect, RGB(30, 30, 30));
+		CDialog::OnPaint();
+
+		CDialog::OnPaint();
+	}
 }
 
 // 热键消息处理
@@ -131,26 +206,30 @@ void CMicrophoneControllerDlg::OnHotKey(UINT nHotKeyId, UINT nKey1, UINT nKey2)
 	// TODO: 在此添加消息处理程序代码和/或调用默认值
 	switch (nHotKeyId) {
 	case 1001:
-	{
-		if (!press) {
-			// 未按下
+	
+		if (!muteStatus) {
 			mute(TRUE);
-			GetDlgItem(IDC_STATIC)->SetWindowText(_T("麦克风已静音")); // 文本
-			GetDlgItem(IDC_BUTTON1)->SetWindowText(_T("解除静音")); // 按钮
-			ShowToolTip(_T("提示"), _T("已静音"), NIIF_NONE, 500);
-			press = true;
+			//ShowToolTip(_T("提示"), _T("已静音"), NIIF_NONE, 500);// 静音时长在win10下不能用
+			m_btn.SetImage(1); // ALT_TYPE 静音
+			modifyTray(IDR_MAINFRAME_MUTE);
+			muteStatus = true;
 		}
 		else {
 			mute(FALSE);
-			GetDlgItem(IDC_STATIC)->SetWindowText(_T("麦克风未静音")); // 文本
-			GetDlgItem(IDC_BUTTON1)->SetWindowText(_T("静音")); // 按钮
-			ShowToolTip(_T("提示"), _T("已解除静音"), NIIF_NONE, 500);
-			press = false;
+			//ShowToolTip(_T("提示"), _T("已解除静音"), NIIF_NONE, 500);
+			m_btn.SetImage(0); // STD_TYPE 未静音
+			modifyTray(IDR_MAINFRAME);
+			muteStatus = false;
 		}
 	}break;
 	default:
 		break;
 	}
+
+	SetTimer(1, 1500, NULL);// 启动ID为1的定时器，定时时间为1秒
+	this->ShowWindow(SW_SHOW);
+	this->ShowWindow(SW_RESTORE);
+
 	CDialogEx::OnHotKey(nHotKeyId, nKey1, nKey2);
 }
 
@@ -186,18 +265,12 @@ void CMicrophoneControllerDlg::mute(BOOL flag)
 	m_pRenderSimpleVol->SetMute(flag, NULL); // 麦克风静音 flag=TRUE 静音，flag=FALSE 不静音
 }
 
-// 最小化托盘
-void CMicrophoneControllerDlg::toTray()
+// 获取静音状态
+BOOL CMicrophoneControllerDlg::getMuteStatus()
 {
-	NOTIFYICONDATA nid;
-	nid.cbSize = (DWORD)sizeof(NOTIFYICONDATA);
-	nid.hWnd = this->m_hWnd;  nid.uID = IDR_MAINFRAME;
-	nid.uFlags = NIF_ICON | NIF_MESSAGE | NIF_TIP;
-	nid.uCallbackMessage = WM_SHOWTASK;//自定义的消息名称  
-	nid.hIcon = LoadIcon(AfxGetInstanceHandle(), MAKEINTRESOURCE(IDR_MAINFRAME));
-	strcpy_s(nid.szTip, _T("麦克风控制程序")); // 信息提示条为“麦克风控制程序”  
-	ShowWindow(SW_HIDE); // 隐藏主窗口  
-	Shell_NotifyIcon(NIM_ADD, &nid); // 在托盘区添加图标  
+	BOOL bMute = 0;
+	HRESULT hr =  m_pRenderSimpleVol->GetMute(&bMute);
+	return bMute;
 }
 
 // 显示程序页面
@@ -216,7 +289,7 @@ LRESULT CMicrophoneControllerDlg::onShowTask(WPARAM wParam, LPARAM lParam)
 		menu.CreatePopupMenu();//声明一个弹出式菜单  
 
 	   //增加菜单项“关闭”，点击则发送消息WM_DESTROY给主窗口（已隐藏），将程序结束。  
-		menu.AppendMenu(MF_STRING, WM_DESTROY, TEXT("关闭"));
+		menu.AppendMenu(MF_STRING, WM_DESTROY, TEXT("退出"));
 		//确定弹出式菜单的位置  
 		menu.TrackPopupMenu(TPM_LEFTALIGN, lpoint->x, lpoint->y, this);
 		//资源回收  
@@ -226,11 +299,59 @@ LRESULT CMicrophoneControllerDlg::onShowTask(WPARAM wParam, LPARAM lParam)
 	} break;
 	case WM_LBUTTONDBLCLK://双击左键的处理  
 	{
+		SetTimer(1, 1500, NULL);// 启动ID为1的定时器，定时时间为3秒  
 		this->ShowWindow(SW_SHOW);//简单的显示主窗口
 		this->ShowWindow(SW_RESTORE);
-		this->CenterWindow();
 	} break;
 	}  return 0;
+}
+
+// 气泡提示
+BOOL CMicrophoneControllerDlg::ShowToolTip(LPCTSTR szTitle, LPCTSTR szMsg, DWORD dwInfoFlags, UINT uTimeout)
+{
+	NOTIFYICONDATA m_notify;
+	m_notify.cbSize = sizeof(m_notify);
+	m_notify.hWnd = m_hWnd;
+	m_notify.uID = ID;
+
+	m_notify.uFlags = NIF_INFO;
+	m_notify.uTimeout = uTimeout; // Note that uTimeout is valid only in Windows 2000 and Windows XP.
+	m_notify.dwInfoFlags = dwInfoFlags;
+
+	strcpy(m_notify.szInfoTitle, szTitle);
+	strcpy(m_notify.szInfo, szMsg);
+
+	return Shell_NotifyIcon(NIM_MODIFY, &m_notify);
+}
+
+
+// 最小化托盘
+void CMicrophoneControllerDlg::toTray()
+{
+	NOTIFYICONDATA nid;
+	nid.cbSize = (DWORD)sizeof(NOTIFYICONDATA);
+	nid.hWnd = this->m_hWnd;  
+	nid.uID = ID;
+	nid.uFlags = NIF_ICON | NIF_MESSAGE | NIF_TIP;
+	nid.uCallbackMessage = WM_SHOWTASK;//自定义的消息名称  
+	nid.hIcon = LoadIcon(AfxGetInstanceHandle(), MAKEINTRESOURCE(IDR_MAINFRAME));
+	strcpy_s(nid.szTip, _T("麦克风控制程序")); // 信息提示条为“麦克风控制程序”  
+	ShowWindow(SW_HIDE); // 隐藏主窗口  
+	Shell_NotifyIcon(NIM_ADD, &nid); // 在托盘区添加图标  
+}
+
+// 修改托盘图标
+void CMicrophoneControllerDlg::modifyTray(int IDR)
+{
+	NOTIFYICONDATA nid;
+	nid.cbSize = (DWORD)sizeof(NOTIFYICONDATA);
+	nid.hWnd = this->m_hWnd;
+	nid.uID = ID;
+	nid.uFlags = NIF_ICON;
+	nid.hIcon = LoadIcon(AfxGetInstanceHandle(), MAKEINTRESOURCE(IDR));
+	strcpy_s(nid.szTip, _T("麦克风控制程序")); // 信息提示条为“麦克风控制程序”  
+	// ShowWindow(SW_HIDE); // 隐藏主窗口  
+	Shell_NotifyIcon(NIM_MODIFY, &nid); // 修改图标  
 }
 
 // 删除托盘中图标
@@ -239,12 +360,27 @@ void CMicrophoneControllerDlg::deleteTray()
 	NOTIFYICONDATA nid;
 	nid.cbSize = (DWORD)sizeof(NOTIFYICONDATA);
 	nid.hWnd = this->m_hWnd;
-	nid.uID = IDR_MAINFRAME;
+	nid.uID = ID;
 	nid.uFlags = NIF_ICON | NIF_MESSAGE | NIF_TIP;
 	// nid.uCallbackMessage = WM_SHOWTASK;//自定义的消息名称
 	// nid.hIcon = LoadIcon(AfxGetInstanceHandle(), MAKEINTRESOURCE(IDR_MAINFRAME));
 	// strcpy_s(nid.szTip, _T("麦克风控制程序"));//信息提示条为"麦克风控制程序”
 	Shell_NotifyIcon(NIM_DELETE, &nid); // 在托盘中删除图标
+}
+
+// 定时器消息处理
+void CMicrophoneControllerDlg::OnTimer(UINT_PTR nIDEvent)
+{
+	// TODO: 在此添加消息处理程序代码和/或调用默认值
+	switch (nIDEvent)
+	{
+	case 1:
+		toTray();// 最小化
+		break;
+	default:
+		break;
+	}
+	CDialogEx::OnTimer(nIDEvent);
 }
 
 // 析构函数
@@ -257,48 +393,6 @@ void CMicrophoneControllerDlg::OnDestroy()
 	deleteTray();
 	// 解除热键注册
 	UnregisterHotKey(this->GetSafeHwnd(), 1001);
-}
-
-// 最小化按钮点击事件处理
-void CMicrophoneControllerDlg::OnBnClickedToTray()
-{
-	// TODO: 在此添加控件通知处理程序代码
-	toTray();
-}
-
-// 手动静音按钮监听事件
-void CMicrophoneControllerDlg::OnBnClickedButton1()
-{
-	// TODO: 在此添加控件通知处理程序代码
-	if (!press) {
-		// 未按下
-		mute(TRUE);
-		GetDlgItem(IDC_STATIC)->SetWindowText(_T("麦克风已静音")); // 文本
-		GetDlgItem(IDC_BUTTON1)->SetWindowText(_T("解除静音")); // 按钮
-		press = true;
-	}
-	else {
-		mute(FALSE);
-		GetDlgItem(IDC_STATIC)->SetWindowText(_T("麦克风未静音")); // 文本
-		GetDlgItem(IDC_BUTTON1)->SetWindowText(_T("静音")); // 按钮
-		press = false;
-	}
-}
-
-// 气泡提示
-BOOL CMicrophoneControllerDlg::ShowToolTip(LPCTSTR szTitle, LPCTSTR szMsg, DWORD dwInfoFlags, UINT uTimeout)
-{
-	NOTIFYICONDATA m_notify;
-	m_notify.cbSize = sizeof(m_notify);
-	m_notify.hWnd = m_hWnd;
-	m_notify.uID = IDR_MAINFRAME;
-
-	m_notify.uFlags = NIF_INFO;
-	m_notify.uTimeout = uTimeout;
-	m_notify.dwInfoFlags = dwInfoFlags;
-
-	strcpy(m_notify.szInfoTitle, szTitle);
-	strcpy(m_notify.szInfo, szMsg);
-
-	return Shell_NotifyIcon(NIM_MODIFY, &m_notify);
+	// 删除定时器
+	KillTimer(1);
 }

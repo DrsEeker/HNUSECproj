@@ -183,14 +183,22 @@
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="CGdiPlusBitmap.h" />
     <ClInclude Include="framework.h" />
+    <ClInclude Include="GdipButton.h" />
+    <ClInclude Include="MemDC.h" />
     <ClInclude Include="MicrophoneController.h" />
     <ClInclude Include="MicrophoneControllerDlg.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Resource.h" />
+    <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="GdipButton.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="MicrophoneController.cpp" />
     <ClCompile Include="MicrophoneControllerDlg.cpp" />
     <ClCompile Include="pch.cpp">
@@ -207,6 +215,9 @@
     <None Include="res\MicrophoneController.rc2" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="res\maikefeng-jingyin.png" />
+    <Image Include="res\maikefeng.png" />
+    <Image Include="res\MicrophoneController-jingyin.ico" />
     <Image Include="res\MicrophoneController.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

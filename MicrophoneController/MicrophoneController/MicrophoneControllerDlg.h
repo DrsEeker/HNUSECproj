@@ -5,12 +5,14 @@
 #pragma once
 #pragma warning(disable : 4996)
 
+#include "GdipButton.h"
 #include "Mmdeviceapi.h"
 #include "Endpointvolume.h"
 #include "Audioclient.h"
 #include "string.h"
 
-
+#define ID 7668
+ 
 // CMicrophoneControllerDlg 对话框
 class CMicrophoneControllerDlg : public CDialogEx
 {
@@ -20,7 +22,7 @@ public:
 
 // 对话框数据
 #ifdef AFX_DESIGN_TIME
-	enum { IDD = IDD_MFCAPPLICATION1_DIALOG };
+	enum { IDD = IDD_MICROPHONECONTROLLER_DIALOG};
 #endif
 
 protected:
@@ -37,26 +39,29 @@ protected:
 public:
 	afx_msg void OnHotKey(UINT nHotKeyId, UINT nKey1, UINT nKey2); // 消息处理程序
 
-	int OnCreate(LPCREATESTRUCT lpCreateStruct);
-	void OnNcPaint();
+	void OnPaint();
+	void OnSize(UINT nType, int cx, int cy);
 	void OnDestroy(); // 析构函数
 
-	void toTray(); // 最小化托盘
-	LRESULT onShowTask(WPARAM wParam, LPARAM lParam); // 显示页面
-	void deleteTray(); // 删除托盘中的图标
-
-	int press;  // 按下状态
+	BOOL muteStatus;  // 按下状态
+	CGdipButton m_btn;
+	afx_msg void OnTimer(UINT_PTR nIDEvent);
 
 	IMMDeviceEnumerator* m_pIMMEnumerator = NULL;	// 设备接口列表
 	IMMDevice* pIMMDeivce = NULL; // 设备
 	IAudioEndpointVolume* m_pRenderSimpleVol = NULL;	// 麦克风音量控制接口
 
+	void initView(); // 初始化view
+
 	void initDevice(); // 初始化设备
 	void mute(BOOL flag);// 静音函数
+	BOOL getMuteStatus();// 获取静音状态
 
+	void toTray(); // 最小化托盘
+	void modifyTray(int IDR); // 修改托盘图标
+	void deleteTray(); // 删除托盘中的图标
+
+	LRESULT onShowTask(WPARAM wParam, LPARAM lParam); // 显示页面
 	BOOL ShowToolTip(LPCTSTR szTitle, LPCTSTR szMsg, DWORD dwInfoFlags, UINT uTimeout); // 气泡提示
 
-	CButton 最小化;
-	afx_msg void OnBnClickedToTray();
-	afx_msg void OnBnClickedButton1();
 };
