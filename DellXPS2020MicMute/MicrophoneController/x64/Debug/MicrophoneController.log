@@ -1,32 +1,11 @@
-﻿  pch.cpp
-  GdipButton.cpp
-  _WIN32_WINNT not defined. Defaulting to _WIN32_WINNT_MAXVER (see WinSDKVer.h)
-  MicrophoneController.cpp
-  MicrophoneControllerDlg.cpp
-\\Mac\Home\Desktop\My work\学习\MicrophoneController\MicrophoneController\MicrophoneControllerDlg.cpp(225,2): error C2047: 非法的 default
-\\Mac\Home\Desktop\My work\学习\MicrophoneController\MicrophoneController\MicrophoneControllerDlg.cpp(224,3): error C2043: 非法 break
-\\Mac\Home\Desktop\My work\学习\MicrophoneController\MicrophoneController\MicrophoneControllerDlg.cpp(226,3): error C2043: 非法 break
-\\Mac\Home\Desktop\My work\学习\MicrophoneController\MicrophoneController\MicrophoneControllerDlg.cpp(229,24): error C4430: 缺少类型说明符 - 假定为 int。注意: C++ 不支持默认 int
-\\Mac\Home\Desktop\My work\学习\MicrophoneController\MicrophoneController\MicrophoneControllerDlg.cpp(229,2): error C2365: “SetTimer”: 重定义；以前的定义是“函数”
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\um\winuser.h(7029): message : 参见“SetTimer”的声明
-\\Mac\Home\Desktop\My work\学习\MicrophoneController\MicrophoneController\MicrophoneControllerDlg.cpp(230,2): error C2059: 语法错误:“this”
-\\Mac\Home\Desktop\My work\学习\MicrophoneController\MicrophoneController\MicrophoneControllerDlg.cpp(231,2): error C2059: 语法错误:“this”
-\\Mac\Home\Desktop\My work\学习\MicrophoneController\MicrophoneController\MicrophoneControllerDlg.cpp(233,22): error C2065: “nHotKeyId”: 未声明的标识符
-\\Mac\Home\Desktop\My work\学习\MicrophoneController\MicrophoneController\MicrophoneControllerDlg.cpp(233,33): error C2065: “nKey1”: 未声明的标识符
-\\Mac\Home\Desktop\My work\学习\MicrophoneController\MicrophoneController\MicrophoneControllerDlg.cpp(233,40): error C2065: “nKey2”: 未声明的标识符
-\\Mac\Home\Desktop\My work\学习\MicrophoneController\MicrophoneController\MicrophoneControllerDlg.cpp(233,45): error C2761: “void CWnd::OnHotKey(UINT,UINT,UINT)”: 不允许重新声明成员
-\\Mac\Home\Desktop\My work\学习\MicrophoneController\MicrophoneController\MicrophoneControllerDlg.cpp(234,1): error C2059: 语法错误:“}”
-\\Mac\Home\Desktop\My work\学习\MicrophoneController\MicrophoneController\MicrophoneControllerDlg.cpp(234,1): error C2143: 语法错误: 缺少“;”(在“}”的前面)
-\\Mac\Home\Desktop\My work\学习\MicrophoneController\MicrophoneController\MicrophoneControllerDlg.cpp(238,1): error C2143: 语法错误: 缺少“;”(在“{”的前面)
-\\Mac\Home\Desktop\My work\学习\MicrophoneController\MicrophoneController\MicrophoneControllerDlg.cpp(238,1): error C2447: “{”: 缺少函数标题(是否是老式的形式表?)
-\\Mac\Home\Desktop\My work\学习\MicrophoneController\MicrophoneController\MicrophoneControllerDlg.cpp(321,38): error C2664: “char *strcpy(char *,const char *)”: 无法将参数 1 从“WCHAR [64]”转换为“char *”
-\\Mac\Home\Desktop\My work\学习\MicrophoneController\MicrophoneController\MicrophoneControllerDlg.cpp(321,17): message : 与指向的类型无关；强制转换要求 reinterpret_cast、C 样式强制转换或函数样式强制转换
+﻿  MicrophoneControllerDlg.cpp
+\\Mac\Home\Desktop\My work\学习\MicrophoneController\MicrophoneController\MicrophoneControllerDlg.cpp(324,38): error C2664: “char *strcpy(char *,const char *)”: 无法将参数 1 从“WCHAR [64]”转换为“char *”
+\\Mac\Home\Desktop\My work\学习\MicrophoneController\MicrophoneController\MicrophoneControllerDlg.cpp(324,17): message : 与指向的类型无关；强制转换要求 reinterpret_cast、C 样式强制转换或函数样式强制转换
 C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\ucrt\string.h(133,1): message : 参见“strcpy”的声明
-\\Mac\Home\Desktop\My work\学习\MicrophoneController\MicrophoneController\MicrophoneControllerDlg.cpp(322,31): error C2664: “char *strcpy(char *,const char *)”: 无法将参数 1 从“WCHAR [256]”转换为“char *”
-\\Mac\Home\Desktop\My work\学习\MicrophoneController\MicrophoneController\MicrophoneControllerDlg.cpp(322,17): message : 与指向的类型无关；强制转换要求 reinterpret_cast、C 样式强制转换或函数样式强制转换
+\\Mac\Home\Desktop\My work\学习\MicrophoneController\MicrophoneController\MicrophoneControllerDlg.cpp(325,31): error C2664: “char *strcpy(char *,const char *)”: 无法将参数 1 从“WCHAR [256]”转换为“char *”
+\\Mac\Home\Desktop\My work\学习\MicrophoneController\MicrophoneController\MicrophoneControllerDlg.cpp(325,17): message : 与指向的类型无关；强制转换要求 reinterpret_cast、C 样式强制转换或函数样式强制转换
 C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\ucrt\string.h(133,1): message : 参见“strcpy”的声明
-\\Mac\Home\Desktop\My work\学习\MicrophoneController\MicrophoneController\MicrophoneControllerDlg.cpp(338,49): error C2660: “strcpy_s”: 函数不接受 2 个参数
+\\Mac\Home\Desktop\My work\学习\MicrophoneController\MicrophoneController\MicrophoneControllerDlg.cpp(341,49): error C2660: “strcpy_s”: 函数不接受 2 个参数
 C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\ucrt\string.h(28,30): message : 参见“strcpy_s”的声明
-\\Mac\Home\Desktop\My work\学习\MicrophoneController\MicrophoneController\MicrophoneControllerDlg.cpp(352,49): error C2660: “strcpy_s”: 函数不接受 2 个参数
+\\Mac\Home\Desktop\My work\学习\MicrophoneController\MicrophoneController\MicrophoneControllerDlg.cpp(355,49): error C2660: “strcpy_s”: 函数不接受 2 个参数
 C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\ucrt\string.h(28,30): message : 参见“strcpy_s”的声明
-  正在生成代码...

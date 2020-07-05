@@ -109,15 +109,18 @@ BOOL CMicrophoneControllerDlg::OnInitDialog()
 
 	// TODO: 在此添加额外的初始化代码
 
-	// 初始化页面
-	initView();
 	// 初始化设备
 	initDevice();
+	// 初始化页面
+	initView();
 
 	// 初始化热键程序
 	// GetDlgItem(IDC_STATIC)->SetWindowText(_T("麦克风未静音"));
 	RegisterHotKey(this->GetSafeHwnd(), 1001, MOD_NOREPEAT, VK_F9); 	// 注册热键
 
+	// 气泡提示
+	SetTimer(1, 1500, NULL);// 启动ID为1的定时器，定时时间为1.5秒
+	ShowToolTip(_T("提示"), _T("启动程序"), NIIF_NONE, 100);
 	// 设置图标
 	muteStatus = getMuteStatus();
 	if (muteStatus) {
@@ -158,14 +161,11 @@ void CMicrophoneControllerDlg::initView()
 	toTray(); // 最小化到托盘
 	// ModifyStyleEx(WS_EX_APPWINDOW, WS_EX_TOOLWINDOW); // 隐藏任务栏图标
 	ModifyStyleEx(WS_CAPTION, WS_EX_TOOLWINDOW); // 隐藏任务栏图标
-	SetTimer(1, 1500, NULL);// 启动ID为1的定时器，定时时间为1.5秒
-	ShowToolTip(_T("提示"), _T("启动程序"), NIIF_NONE, 100);
-
+	
 	// 按钮设置
 	m_btn.LoadStdImage(IDB_MICROPHONE, _T("PNG"));
 	m_btn.LoadAltImage(IDB_MICROPHONE_MUTE, _T("PNG"));
 	m_btn.EnableToggle(TRUE);
-
 }
 
 void CMicrophoneControllerDlg::OnPaint()
@@ -194,7 +194,6 @@ void CMicrophoneControllerDlg::OnPaint()
 		CPaintDC dc(this);
 		GetClientRect(rect);
 		dc.FillSolidRect(rect, RGB(30, 30, 30));
-		CDialog::OnPaint();
 
 		CDialog::OnPaint();
 	}
@@ -206,7 +205,6 @@ void CMicrophoneControllerDlg::OnHotKey(UINT nHotKeyId, UINT nKey1, UINT nKey2)
 	// TODO: 在此添加消息处理程序代码和/或调用默认值
 	switch (nHotKeyId) {
 	case 1001:
-	
 		if (!muteStatus) {
 			mute(TRUE);
 			//ShowToolTip(_T("提示"), _T("已静音"), NIIF_NONE, 500);// 静音时长在win10下不能用
@@ -221,7 +219,7 @@ void CMicrophoneControllerDlg::OnHotKey(UINT nHotKeyId, UINT nKey1, UINT nKey2)
 			modifyTray(IDR_MAINFRAME);
 			muteStatus = false;
 		}
-	}break;
+		break;
 	default:
 		break;
 	}
@@ -256,6 +254,10 @@ void CMicrophoneControllerDlg::initDevice()
 				hr = pIMMDeivce->Activate(__uuidof(IAudioEndpointVolume), CLSCTX_ALL, NULL, (void**)&m_pRenderSimpleVol);
 			}
 		}
+	}
+	if (FAILED(hr)) {
+		AfxMessageBox(_T("初始化麦克风设备失败"));
+		exit(0);
 	}
 }
 
