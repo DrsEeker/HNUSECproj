@@ -279,7 +279,7 @@ BOOL CMicrophoneControllerDlg::getMuteStatus()
 LRESULT CMicrophoneControllerDlg::onShowTask(WPARAM wParam, LPARAM lParam)
 //wParam接收的是图标的ID，而lParam接收的是鼠标的行为  
 {
-	if (wParam != IDR_MAINFRAME)
+	if (wParam != ID)
 		return 1;
 	switch (lParam)
 	{
@@ -337,7 +337,7 @@ void CMicrophoneControllerDlg::toTray()
 	nid.uFlags = NIF_ICON | NIF_MESSAGE | NIF_TIP;
 	nid.uCallbackMessage = WM_SHOWTASK;//自定义的消息名称  
 	nid.hIcon = LoadIcon(AfxGetInstanceHandle(), MAKEINTRESOURCE(IDR_MAINFRAME));
-	strcpy_s(nid.szTip, _T("麦克风控制程序")); // 信息提示条为“麦克风控制程序”  
+	strcpy_s(nid.szTip, _T("麦克风控制程序（XiaoLab）")); // 信息提示条为“麦克风控制程序”  
 	ShowWindow(SW_HIDE); // 隐藏主窗口  
 	Shell_NotifyIcon(NIM_ADD, &nid); // 在托盘区添加图标  
 }
@@ -351,7 +351,7 @@ void CMicrophoneControllerDlg::modifyTray(int IDR)
 	nid.uID = ID;
 	nid.uFlags = NIF_ICON;
 	nid.hIcon = LoadIcon(AfxGetInstanceHandle(), MAKEINTRESOURCE(IDR));
-	strcpy_s(nid.szTip, _T("麦克风控制程序")); // 信息提示条为“麦克风控制程序”  
+	strcpy_s(nid.szTip, _T("麦克风控制程序（XiaoLab）")); // 信息提示条为“麦克风控制程序”  
 	// ShowWindow(SW_HIDE); // 隐藏主窗口  
 	Shell_NotifyIcon(NIM_MODIFY, &nid); // 修改图标  
 }
