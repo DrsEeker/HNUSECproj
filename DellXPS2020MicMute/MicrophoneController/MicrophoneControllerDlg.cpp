@@ -119,16 +119,22 @@ BOOL CMicrophoneControllerDlg::OnInitDialog()
 	RegisterHotKey(this->GetSafeHwnd(), 1001, MOD_NOREPEAT, VK_F9); 	// 注册热键
 
 	// 气泡提示
-	SetTimer(1, 1500, NULL);// 启动ID为1的定时器，定时时间为1.5秒
-	ShowToolTip(_T("提示"), _T("启动程序"), NIIF_NONE, 100);
+	//SetTimer(1, 800, NULL);// 启动ID为1的定时器，定时时间为1.5秒
+	//ShowToolTip(_T("提示"), _T("启动程序"), NIIF_NONE, 100);
 	// 设置图标
-	muteStatus = getMuteStatus();
-	if (muteStatus) {
-		m_btn.SetImage(1);
-	}
-	else {
-		m_btn.SetImage(0);
-	}
+	//muteStatus = getMuteStatus();
+	//if (muteStatus) {
+	//	m_btn.SetImage(1);
+	//}
+	//else {
+	//	m_btn.SetImage(0);
+	//}
+
+	mute(TRUE);
+	ShowToolTip(_T("提示"), _T("已静音"), NIIF_NONE, 500);// 静音时长在win10下不能用
+	m_btn.SetImage(1); // ALT_TYPE 静音
+	modifyTray(IDR_MAINFRAME_MUTE);
+	muteStatus = true;
 
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
 }
